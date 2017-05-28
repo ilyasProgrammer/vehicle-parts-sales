@@ -1,0 +1,22 @@
+# -*- coding: utf-8 -*-
+{
+    'name': "mrp_mods",
+    'description': """mrp_mods""",
+    'summary': """mrp_mods""",
+    'author': "Ilyas",
+    'website': "https://github.com/ilyasProgrammer",
+    'category': 'Custom',
+    'version': '1.0',
+    'depends': [
+        'mrp',
+        'stock',
+                ],
+    'data': [
+        'views/stock_production_lot.xml',
+    ],
+    'demo': [
+    ],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+}
