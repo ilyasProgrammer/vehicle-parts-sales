@@ -1,5 +1,5 @@
-kro
-===
+MRP mods
+========
 
 Credits
 =======
@@ -10,7 +10,7 @@ Ilyas
 
 Sponsors
 --------
-KRO
+kraft
 
 Maintainers
 -----------
@@ -18,5 +18,3 @@ Ilyas
 
 Further information
 ===================
-{1}
-{2}
