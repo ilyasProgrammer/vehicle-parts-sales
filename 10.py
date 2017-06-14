@@ -1,5 +1,5 @@
 [options]
-addons_path =/pd/odoo/addons,/pd/kraft
+addons_path =/pd/odoo/addons,/pd/krafto
 db_template = template1
 db_host = False
 db_maxconn = 64

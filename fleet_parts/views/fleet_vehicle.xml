@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+     <record id="fleet_vehicle_form_view_mod" model="ir.ui.view">
+        <field name="name">fleet.vehicle.form.mod</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="priority" eval="256"/>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+            <div class="oe_title" position="after">
+                <group col="1">
+                    <button string="Добавить деталь" type="object" name="add_part" class="oe_highlight"/>
+                    <field name="part_ids" nolabel="1"/>
+                </group>
+            </div>
+        </field>
+    </record>
+</data>
+</odoo>
