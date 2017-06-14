@@ -9,7 +9,7 @@
         <field name="arch" type="xml">
             <div class="oe_title" position="after">
                 <group col="1">
-                    <button string="Добавить деталь" type="object" name="add_part" class="oe_highlight"/>
+                    <button string="Add part" type="object" name="add_part" class="oe_highlight"/>
                     <field name="part_ids" nolabel="1"/>
                 </group>
             </div>
