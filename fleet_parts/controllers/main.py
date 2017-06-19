@@ -12,8 +12,4 @@ class FleetPartsAPI(http.Controller):
 
     @http.route('/web/load_part', type='json', auth='none')
     def load_part(self, uid, db, vehicle_id, data):
-        return {'ok': True}
-
-    @http.route('/web/cat', type='json', auth='none')
-    def cat(self):
-        return {'ok': True}
+        print 'OK VERY GOOD'
