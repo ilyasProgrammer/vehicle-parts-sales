@@ -5,14 +5,6 @@ import logging
 import json
 import urllib2
 import hashlib
-from odoo import http
-from odoo.http import request
-import werkzeug
-import xml.etree.ElementTree
-import base64
-import re
-from bs4 import BeautifulSoup as bs
-import string
 
 _logger = logging.getLogger("# " + __name__)
 _logger.setLevel(logging.DEBUG)
