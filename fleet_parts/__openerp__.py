@@ -13,7 +13,8 @@
                 ],
     'data': [
         'views/fleet_vehicle.xml',
-        '/pd/krafto/fleet_parts/cron_jobs.xml',
+        'views/parts.xml',
+        'cron_jobs.xml',
     ],
     'demo': [
     ],

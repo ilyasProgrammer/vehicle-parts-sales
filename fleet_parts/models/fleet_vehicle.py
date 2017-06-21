@@ -17,7 +17,7 @@ class TimeOut(Exception):
 class FleetVehicleParts(models.Model):
     _inherit = "fleet.vehicle"
 
-    part_ids = fields.One2many('product.product', 'vehicle_id', string=u'Детали')
+    part_line_ids = fields.One2many('fleet.part.line', 'vehicle_id', string=u'Детали')
     vin = fields.Char(string=u'ВИН', default='WAUZZZ8ZZ1N006767')
 
     @api.multi
@@ -55,20 +55,31 @@ class FleetVehicleParts(models.Model):
 class ProductVehicle(models.Model):
     _inherit = "product.product"
 
-    vehicle_id = fields.Many2one('product.product', 'fleet')
-    guid = fields.Char(u'АйДи')
-    type = fields.Selection([('ORIGINAL'), ('NONORIGINAL'), ('REUSED')])
-    rate = fields.Integer(u'Состояние')
-    sellingRate = fields.Integer(u'Продаваемость')
+    c_id = fields.Integer('АйДи каталога')
     note = fields.Char(u'Примечание')
     oem = fields.Char(u'Артикул')
     secondOem = fields.Char(u'GMNUM артикул')
 
 
+class PartLine(models.Model):
+    _name = "fleet.part.line"
+    _description = u'Строка таблицы товаров разборщика'
+
+    vehicle_id = fields.Many2one('fleet.vehicle', string=u'Авто')
+    product_id = fields.Many2one('product.product', string=u'Деталь')
+    guid = fields.Char(u'АйДи')
+    type = fields.Selection([('ORIGINAL','ORIGINAL'), ('NONORIGINAL','NONORIGINAL'), ('REUSED','REUSED')], default='ORIGINAL')
+    rate = fields.Integer(u'Состояние')
+    price = fields.Float(u'Цена')
+    sellingRate = fields.Integer(u'Продаваемость')
+    weight = fields.Float(u'Вес')
+    volume = fields.Float(u'Объем')
+
+
 class VehicleBrand(models.Model):
     _inherit = "fleet.vehicle.model.brand"
 
-    c_id = fields.Integer('АйДи каталога')
+    c_id = fields.Integer(u'АйДи каталога')
     code = fields.Char(u'Код')
     brand = fields.Char(u'Бренд')
     allowVinSearch = fields.Boolean(u'Разрешить поиск по каталогу')
