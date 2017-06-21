@@ -13,5 +13,17 @@
         <field name="function" eval="'sync_brands'"/>
         <field name="args" eval="'()'"/>
     </record>
+    <record model="ir.cron" id="ir_cron_get_sync_models">
+        <field name="name">ir_cron_get_sync_models</field>
+        <field eval="False" name="active" />
+        <field name="interval_number">24</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">0</field>
+        <field name="priority">100</field>
+        <field name="doall" eval="False"/>
+        <field name="model" eval="'fleet.vehicle.model'"/>
+        <field name="function" eval="'sync_models'"/>
+        <field name="args" eval="'()'"/>
+    </record>
 </data>
 </openerp>

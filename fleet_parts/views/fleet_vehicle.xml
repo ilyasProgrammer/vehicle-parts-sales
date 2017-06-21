@@ -1,6 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 <data>
+    <record id='fleet_vehicle_model_view_tree_mod' model='ir.ui.view'>
+        <field name="name">fleet.vehicle.model.form.mod</field>
+        <field name="model">fleet.vehicle.model</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_model_view_tree"/>
+        <field name="arch" type="xml">
+            <tree position="replace">
+                <tree>
+                    <field name="name"/>
+                    <field name="brand_id"/>
+                    <field name="c_id"/>
+                    <field name="modelCode"/>
+                </tree>
+            </tree>
+        </field>
+    </record>
+    <record id='fleet_vehicle_model_view_form_mod' model='ir.ui.view'>
+        <field name="name">fleet.vehicle.model.form.mod</field>
+        <field name="model">fleet.vehicle.model</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_model_view_form"/>
+        <field name="arch" type="xml">
+            <notebook position="replace">
+                <group>
+                    <field name="c_id"/>
+                    <field name="modelCode"/>
+                </group>
+            </notebook>
+        </field>
+    </record>
+     <record id="brand_tree_view_mod" model="ir.ui.view">
+        <field name="name">brand.tree.mod</field>
+        <field name="model">fleet.vehicle.model.brand</field>
+        <field name="priority" eval="256"/>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_model_brand_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="id"/>
+                <field name="code"/>
+                <field name="brand"/>
+                <field name="allowVinSearch"/>
+                <field name="type"/>
+                <field name="parentId"/>
+            </field>
+        </field>
+    </record>
      <record id="fleet_vehicle_form_view_mod" model="ir.ui.view">
         <field name="name">fleet.vehicle.form.mod</field>
         <field name="model">fleet.vehicle</field>
@@ -24,7 +68,6 @@
             <h1 position="replace">
                 <group>
                     <field name="name"/>
-                    <field name="c_id"/>
                     <field name="code"/>
                     <field name="brand"/>
                     <field name="allowVinSearch"/>

@@ -79,12 +79,12 @@ class PartLine(models.Model):
 class VehicleBrand(models.Model):
     _inherit = "fleet.vehicle.model.brand"
 
-    c_id = fields.Integer(u'АйДи каталога')
+    c_id = fields.Integer(u'ID каталога')
     code = fields.Char(u'Код')
     brand = fields.Char(u'Бренд')
     allowVinSearch = fields.Boolean(u'Разрешить поиск по каталогу')
     type = fields.Char(u'Тип')
-    parentId = fields.Integer(u'АйДи родителя')
+    parentId = fields.Many2one('fleet.vehicle.model.brand')
 
     @api.model
     def sync_brands(self):
@@ -99,10 +99,49 @@ class VehicleBrand(models.Model):
         if response:
             data = json.load(response)
             for r in data['result']:
-                found = brand.search([('name', '=', r['name'])])
+                found = brand.search([('c_id', '=', int(r['id']))])
                 if not found:
-                    brand.create(r)
-                    _logger.info("New brand created: %s", r['name'])
+                    r['c_id'] = int(r['id'])
+                    if r.get('parentId', False):
+                        found_parent = brand.search([('c_id', '=', int(r['parentId']))])
+                        if found_parent:
+                            r['parentId'] = found_parent.id
+                    new_brand = brand.create(r)
+                    self._cr.commit()
+                    _logger.info("New brand created: %s", new_brand.name)
                 else:
                     found[0].write(r)
-                    _logger.info("Old brand found and updated: %s", r['name'])
+                    _logger.info("Old brand found and updated: %s", found.name)
+
+
+class VehicleModel(models.Model):
+    _inherit = "fleet.vehicle.model"
+
+    c_id = fields.Integer(u'ID каталога')
+    modelCode = fields.Char(u'Код модели')
+
+    @api.model
+    def sync_models(self):
+        # called by cron
+        url = 'http://develop.itbrat.ru:8080/krafto-crawler/frontend/modelsinfo.jsp?uid=0&db=demo&fleet_id=0&vin=WVWZZZ3BZVP098238&hash=86DEF2B13F7C128462625C239F62055F'
+        req = urllib2.Request(url)
+        brand = self.env['fleet.vehicle.model.brand']
+        model = self.env['fleet.vehicle.model']
+        try:
+            response = urllib2.urlopen(req, timeout=20)
+        except urllib2.URLError, e:
+            raise TimeOut("There was an error: %r" % e)
+        if response:
+            data = json.load(response)
+            for r in data['result']:
+                found = model.search([('c_id', '=', int(r['id']))])
+                if not found:
+                    found_brand = brand.search([('c_id', '=', int(r['brandId']))])
+                    r['brand_id'] = found_brand.id
+                    r['c_id'] = int(r['id'])
+                    model.create(r)
+                    self._cr.commit()
+                    _logger.info("New model created: %s", r['name'])
+                else:
+                    found[0].write(r)
+                    _logger.info("Old model found and updated: %s", r['name'])
