@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 <data>
-    <record id='fleet_vehicle_model_view_tree_mod' model='ir.ui.view'>
+    <record id='vehicle_model_tree_mod' model='ir.ui.view'>
         <field name="name">fleet.vehicle.model.form.mod</field>
         <field name="model">fleet.vehicle.model</field>
         <field name="inherit_id" ref="fleet.fleet_vehicle_model_view_tree"/>
@@ -16,7 +16,7 @@
             </tree>
         </field>
     </record>
-    <record id='fleet_vehicle_model_view_form_mod' model='ir.ui.view'>
+    <record id='model_form_mod' model='ir.ui.view'>
         <field name="name">fleet.vehicle.model.form.mod</field>
         <field name="model">fleet.vehicle.model</field>
         <field name="inherit_id" ref="fleet.fleet_vehicle_model_view_form"/>
@@ -29,7 +29,7 @@
             </notebook>
         </field>
     </record>
-     <record id="brand_tree_view_mod" model="ir.ui.view">
+    <record id="brand_tree_mod" model="ir.ui.view">
         <field name="name">brand.tree.mod</field>
         <field name="model">fleet.vehicle.model.brand</field>
         <field name="priority" eval="256"/>
@@ -45,21 +45,7 @@
             </field>
         </field>
     </record>
-     <record id="fleet_vehicle_form_view_mod" model="ir.ui.view">
-        <field name="name">fleet.vehicle.form.mod</field>
-        <field name="model">fleet.vehicle</field>
-        <field name="priority" eval="256"/>
-        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
-        <field name="arch" type="xml">
-            <div class="oe_title" position="after">
-                <group col="1">
-                    <button string="Добавить из каталога" type="object" name="add_part" class="oe_highlight"/>
-                    <field name="part_line_ids" nolabel="1"/>
-                </group>
-            </div>
-        </field>
-    </record>
-     <record id="brand_form_view_mod" model="ir.ui.view">
+    <record id="brand_form_mod" model="ir.ui.view">
         <field name="name">fleet.vehicle.model.brand.form.mod</field>
         <field name="model">fleet.vehicle.model.brand</field>
         <field name="priority" eval="256"/>
@@ -75,6 +61,52 @@
                     <field name="parentId"/>
                 </group>
             </h1>
+        </field>
+    </record>
+    <record id="fleet_vehicle_form_mod7" model="ir.ui.view">
+        <field name="name">fleet.vehicle.form.mod</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="priority" eval="256"/>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+            <header position="inside">
+                <button string="Проверить VIN" name="check_vin" type="object" attrs="{'invisible': [('vin_checked', '=', True)]}" class="btn btn-primary o_red"/>
+            </header>
+            <field name="odometer" position="before">
+                <field name="license_plate"/>
+            </field>
+            <field name="driver_id" position="before">
+                <field name="prod_date"/>
+                <field name="engine"/>
+                <field name="gear"/>
+            </field>
+            <div class="oe_title" position="after">
+                <group col="1">
+                    <button string="Добавить из каталога" type="object" name="add_part" class="oe_highlight"/>
+                    <field name="part_line_ids" nolabel="1"/>
+                </group>
+            </div>
+            <field name="vin_sn" position="replace">
+            </field>
+            <div class="oe_title" position="replace">
+                <div class="oe_title">
+                    <label for="vin_sn" class="oe_edit_only"/>
+                    <h3>
+                        <field name="vin_sn" class="oe_inline" attrs="{'readonly': [('vin_checked', '=', True)]}"/>
+                        <span>
+                            <field name="vin_checked" attrs="{'readonly': [('vin_checked', '=', True)]}"/>
+                        </span>
+                    </h3>
+                    <label for="note" class="oe_edit_only"/>
+                    <h3>
+                        <field name="note" class="oe_inline" required="1"/>
+                    </h3>
+                    <label for="model_id" class="oe_edit_only"/>
+                    <h3>
+                        <field name="model_id"/>
+                    </h3>
+                </div>
+            </div>
         </field>
     </record>
 </data>
