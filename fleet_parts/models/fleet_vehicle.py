@@ -22,12 +22,12 @@ class FleetVehicleParts(models.Model):
 
     @api.multi
     def add_part(self):
-        args = str(self._context['uid']) + self.env.cr.dbname + str(self.id) + self.vin
+        args = str(self._context['uid']) + self.env.cr.dbname + self.vin
         key = 'test'
         data = hashlib.md5(args + key)
-        url = 'http://develop.itbrat.ru:8080/krafto-crawler/frontend/razbor.jsp?uid=%s&db=%s&fleet_id=%s&vin=%s&hash=%s'
+        url = 'http://develop.itbrat.ru:8080/krafto-crawler/frontend/razbor.jsp?uid=%s&db=%s&vin=%s&hash=%s'
         data_hash = data.hexdigest()
-        url_arg = (self._context['uid'], self.env.cr.dbname, self.id, self.vin, data_hash)
+        url_arg = (self._context['uid'], self.env.cr.dbname, self.vin, data_hash)
         return {
             'type': 'ir.actions.act_url',
             'url': url % url_arg,
