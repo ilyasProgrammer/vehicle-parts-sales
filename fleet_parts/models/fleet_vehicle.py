@@ -56,5 +56,42 @@ class ProductVehicle(models.Model):
     _inherit = "product.product"
 
     vehicle_id = fields.Many2one('product.product', 'fleet')
+    guid = fields.Char(u'АйДи')
+    type = fields.Selection([('ORIGINAL'), ('NONORIGINAL'), ('REUSED')])
+    rate = fields.Integer(u'Состояние')
+    sellingRate = fields.Integer(u'Продаваемость')
+    note = fields.Char(u'Примечание')
+    oem = fields.Char(u'Артикул')
+    secondOem = fields.Char(u'GMNUM артикул')
 
 
+class VehicleBrand(models.Model):
+    _inherit = "fleet.vehicle.model.brand"
+
+    c_id = fields.Integer('АйДи каталога')
+    code = fields.Char(u'Код')
+    brand = fields.Char(u'Бренд')
+    allowVinSearch = fields.Boolean(u'Разрешить поиск по каталогу')
+    type = fields.Char(u'Тип')
+    parentId = fields.Integer(u'АйДи родителя')
+
+    @api.model
+    def sync_brands(self):
+        # called by cron
+        url = 'http://develop.itbrat.ru:8080/krafto-crawler/frontend/catalogsinfo.jsp?uid=0&db=demo&fleet_id=0&vin=WVWZZZ3BZVP098238&hash=86DEF2B13F7C128462625C239F62055F'
+        req = urllib2.Request(url)
+        brand = self.env['fleet.vehicle.model.brand']
+        try:
+            response = urllib2.urlopen(req, timeout=20)
+        except urllib2.URLError, e:
+            raise TimeOut("There was an error: %r" % e)
+        if response:
+            data = json.load(response)
+            for r in data['result']:
+                found = brand.search([('name', '=', r['name'])])
+                if not found:
+                    brand.create(r)
+                    _logger.info("New brand created: %s", r['name'])
+                else:
+                    found[0].write(r)
+                    _logger.info("Old brand found and updated: %s", r['name'])
