@@ -63,7 +63,7 @@
             </h1>
         </field>
     </record>
-    <record id="fleet_vehicle_form_mod7" model="ir.ui.view">
+    <record id="fleet_vehicle_form_mod" model="ir.ui.view">
         <field name="name">fleet.vehicle.form.mod</field>
         <field name="model">fleet.vehicle</field>
         <field name="priority" eval="256"/>

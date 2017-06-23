@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 <data>
-     <record id="parts_tree" model="ir.ui.view">
+    <record id="parts_tree" model="ir.ui.view">
         <field name="name">fleet.part.line.tree</field>
         <field name="model">fleet.part.line</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="vehicle_id"/>
+                <!--<field name="vehicle_id"/>-->
                 <field name="product_id"/>
                 <field name="guid"/>
                 <field name="type"/>

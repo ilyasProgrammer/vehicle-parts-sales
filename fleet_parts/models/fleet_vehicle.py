@@ -101,6 +101,7 @@ class ProductVehicle(models.Model):
     _inherit = "product.product"
 
     c_id = fields.Integer('АйДи каталога')
+    brandId = fields.Integer('brandId')
     note = fields.Char(u'Примечание')
     oem = fields.Char(u'Артикул')
     secondOem = fields.Char(u'GMNUM артикул')
