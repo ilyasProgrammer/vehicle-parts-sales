@@ -15,6 +15,7 @@
                 <field name="sellingRate"/>
                 <field name="weight"/>
                 <field name="volume"/>
+                <field name="accrued"/>
             </tree>
         </field>
     </record>
@@ -37,6 +38,7 @@
                             <field name="sellingRate"/>
                             <field name="weight"/>
                             <field name="volume"/>
+                            <field name="amount"/>
                         </group>
                     </group>
                 </sheet>

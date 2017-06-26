@@ -20,18 +20,18 @@ class FleetVehicleParts(models.Model):
 
     note = fields.Char(string=u'Название')
     name = fields.Char(compute="_compute_vehicle_name", store=True)
-    vin_checked = fields.Boolean('VIN проверен', default=False, help=u'VIN проверен')
+    vin_checked = fields.Boolean('VIN проверен', default=False, help=u'VIN проверен', copy=False)
     part_line_ids = fields.One2many('fleet.part.line', 'vehicle_id', string=u'Детали')
     prod_date = fields.Integer(u'Дата производства')
     gear = fields.Char(u'Коробка')
     engine = fields.Char(u'Двигатель')
-    license_plate = fields.Char(required=False, help='Номер')
+    license_plate = fields.Char(required=False, help='Номер', copy=False)
     model_id = fields.Many2one('fleet.vehicle.model', u'Модель', required=False, help='Model of the vehicle')
     vin_sn = fields.Char(u'VIN (номер шасси)', copy=False)
     pick_ids = fields.One2many('stock.picking', 'vehicle_id', string=u'Поступления')
     picking_type = fields.Many2one('stock.picking.type', string=u'Вид поступления', required=True)
     picks_count = fields.Integer(compute="_compute_all", string=u'Поступления')
-    all_debited = fields.Integer(compute="_compute_all", string=u'Все оприходовано')
+    all_debited = fields.Boolean(string=u'Все оприходовано', default=False)
 
     @api.depends('model_id', 'license_plate')
     def _compute_vehicle_name(self):
@@ -102,20 +102,31 @@ class FleetVehicleParts(models.Model):
 
     @api.one
     def debit(self):
+        # Кнопка. Оприходвать неоприходованные позиции
+        self._compute_all()
+        if self.all_debited:
+            return
         if not self.picking_type:
             return
         pick = self.env['stock.picking']
         move = self.env['stock.move']
-        vals = {'location_dest_id': self.picking_type.default_location_dest_id,
-                'location_id': self.picking_type.default_location_src_id,
-                'picking_type_id': self.picking_type,
+        vals = {'location_dest_id': self.picking_type.default_location_dest_id.id,
+                'location_id': self.picking_type.default_location_src_id.id,
+                'picking_type_id': self.picking_type.id,
+                'vehicle_id': self.id,
                 }
-        lines = []
+        new_pick = pick.create(vals)
         for r in self.part_line_ids:
             if not r.accrued:
-                line_vals = {'name': ''}
-                lines.append()
-            new_pick = pick.create(vals)
+                line_vals = {'name': 'move',
+                             'product_id': r.product_id.id,
+                             'location_id': self.picking_type.default_location_src_id.id,
+                             'location_dest_id': self.picking_type.default_location_dest_id.id,
+                             'ordered_qty': r.amount,
+                             'picking_id': new_pick.id,
+                             'product_uom': r.product_id.uom_id.id}
+                new_move = move.create(line_vals)
+                r.accrued = True
         return True
 
     @api.multi
@@ -130,9 +141,17 @@ class FleetVehicleParts(models.Model):
 
     def _compute_all(self):
         for record in self:
-            record.all_debited = False
-            record.picks_count = self.env['stock.picking'].search_count([('vehicle_id', '=', record.id)])
-            record.all_debited = self.env['fleet.part.line'].search_count([('vehicle_id', '=', record.id), ('accrued', '=', False)]) == 0
+            record.picks_count = record.env['stock.picking'].search_count([('vehicle_id', '=', record.id)])
+            self.all_debited = True
+            for r in self.part_line_ids:
+                if not r.accrued:
+                    self.all_debited = False
+                    break
+
+    # @api.onchange('part_line_ids')
+    # def _onchange_part_line_ids(self):
+        # self.all_debited = False
+        # self.all_debited = self.env['fleet.part.line'].search_count([('vehicle_id', '=', self.id), ('accrued', '=', False)]) == 0
 
 
 class ProductVehicle(models.Model):

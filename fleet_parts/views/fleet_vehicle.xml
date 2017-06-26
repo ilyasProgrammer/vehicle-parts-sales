@@ -131,8 +131,10 @@
             <div class="oe_title" position="after">
 
                 <span col="2" class="pull-left">
+                    <field name="all_debited" invisible="1"/>
                     <button style="float:left" string="Добавить из каталога" type="object" name="add_part" class="oe_highlight "/>
-                    <button style="float:left" string="Оприходовать" name="debit" type="object" attrs="{'invisible': [('all_debited', '=', True)]}" class="btn-primary"/>
+                    <button style="float:left" string="Оприходовать" name="debit" type="object" class="btn-primary"/>
+                    <!--<button style="float:left" string="Оприходовать" name="debit" type="object" attrs="{'invisible': [('all_debited', '=', True)]}" class="btn-primary"/>-->
                 </span>
                 <group col="1">
                     <field name="part_line_ids" nolabel="1"/>
@@ -163,7 +165,7 @@
     </record>
 
     <record id="fleet_pickings" model="ir.actions.act_window">
-            <field name="name">Done Transfers</field>
+            <field name="name">Поступления деталей</field>
             <field name="res_model">stock.picking</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
