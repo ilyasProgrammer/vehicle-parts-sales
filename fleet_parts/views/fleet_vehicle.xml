@@ -72,6 +72,52 @@
             <header position="inside">
                 <button string="Проверить VIN" name="check_vin" type="object" attrs="{'invisible': [('vin_checked', '=', True)]}" class="btn btn-primary o_red"/>
             </header>
+                <div name="button_box" position="replace">
+                    <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                            </button>
+                            <button name="return_action_to_open"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-book"
+                                context="{'xml_id':'fleet_vehicle_log_contract_action'}"
+                                help="show the contract for this vehicle">
+                                <field name="contract_count" widget="statinfo" string="Contracts"/>
+                            </button>
+                            <button name="act_show_log_cost"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-usd"
+                                help="show all the costs for this vehicle"
+                                groups="fleet.fleet_group_manager">
+                                <field name="cost_count" widget="statinfo" string="Costs"/>
+                            </button>
+                            <button name="return_action_to_open"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-wrench"
+                                context="{'xml_id':'fleet_vehicle_log_services_action'}"
+                                help="show the services logs for this vehicle" >
+                                <field name="service_count" widget="statinfo" string="Services"/>
+                            </button>
+                            <button name="open_pickings"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-th"
+                                help="Документы оприходования" >
+                                <!--<field name="fuel_logs_count" widget="statinfo" string="Fuel"/>-->
+                            </button>
+                            <button name="return_action_to_open"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-tachometer"
+                                context="{'xml_id':'fleet_vehicle_odometer_action'}"
+                                help="show the odometer logs for this vehicle" >
+                                <field name="odometer_count" widget="statinfo" string="Odometer"/>
+                            </button>
+                        </div>
+            </div>
             <field name="odometer" position="before">
                 <field name="license_plate"/>
             </field>
@@ -108,6 +154,27 @@
                 </div>
             </div>
         </field>
+    </record>
+
+    <record id="fleet_pickings" model="ir.actions.act_window">
+            <field name="name">Done Transfers</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain"></field>
+            <field name="context">{
+                    'vehicle_id': active_id,
+            }
+            </field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediately or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
     </record>
 </data>
 </odoo>

@@ -28,6 +28,8 @@ class FleetVehicleParts(models.Model):
     license_plate = fields.Char(required=False, help='Номер')
     model_id = fields.Many2one('fleet.vehicle.model', u'Модель', required=False, help='Model of the vehicle')
     vin_sn = fields.Char(u'VIN (номер шасси)', copy=False)
+    pick_ids = fields.One2many('stock.picking', 'vehicle_id', string=u'Поступления')
+    picks_count = fields.Integer(compute="_compute_count_all", string=u'Поступления')
 
     @api.depends('model_id', 'license_plate')
     def _compute_vehicle_name(self):
@@ -95,6 +97,22 @@ class FleetVehicleParts(models.Model):
                 if found_model:
                     self.model_id = found_model
         return True
+
+    @api.multi
+    def open_pickings(self):
+        self.ensure_one()
+        res = self.env['ir.actions.act_window'].for_xml_id('fleet_parts', 'fleet_pickings')
+        res.update(
+            context=dict(self.env.context, default_vehicle_id=self.id, group_by=False),
+            domain=[('vehicle_id', '=', self.id)]
+        )
+        return res
+
+    def _compute_all(self):
+        Cost = self.env['
+']
+        for record in self:
+            record.picks_count = Odometer.search_count([('vehicle_id', '=', record.id)])
 
 
 class ProductVehicle(models.Model):

@@ -10,7 +10,7 @@ _logger.setLevel(logging.DEBUG)
 
 
 class FleetPartsAPI(http.Controller):
-
+    # TODO Проверка хеша
     @http.route('/web/load_part', type='http',  auth="public", csrf=False, website=True)
     def load_part(self, uid, db, vin, hash, data):
         # Add product.product

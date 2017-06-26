@@ -10,10 +10,12 @@
     'depends': [
         'sale',
         'fleet',
+        'stock',
                 ],
     'data': [
         'views/fleet_vehicle.xml',
         'views/parts.xml',
+        'views/stock.xml',
         'cron_jobs.xml',
     ],
     'demo': [
