@@ -29,7 +29,9 @@ class FleetVehicleParts(models.Model):
     model_id = fields.Many2one('fleet.vehicle.model', u'Модель', required=False, help='Model of the vehicle')
     vin_sn = fields.Char(u'VIN (номер шасси)', copy=False)
     pick_ids = fields.One2many('stock.picking', 'vehicle_id', string=u'Поступления')
-    picks_count = fields.Integer(compute="_compute_count_all", string=u'Поступления')
+    picking_type = fields.Many2one('stock.picking.type', string=u'Вид поступления', required=True)
+    picks_count = fields.Integer(compute="_compute_all", string=u'Поступления')
+    all_debited = fields.Integer(compute="_compute_all", string=u'Все оприходовано')
 
     @api.depends('model_id', 'license_plate')
     def _compute_vehicle_name(self):
@@ -98,6 +100,24 @@ class FleetVehicleParts(models.Model):
                     self.model_id = found_model
         return True
 
+    @api.one
+    def debit(self):
+        if not self.picking_type:
+            return
+        pick = self.env['stock.picking']
+        move = self.env['stock.move']
+        vals = {'location_dest_id': self.picking_type.default_location_dest_id,
+                'location_id': self.picking_type.default_location_src_id,
+                'picking_type_id': self.picking_type,
+                }
+        lines = []
+        for r in self.part_line_ids:
+            if not r.accrued:
+                line_vals = {'name': ''}
+                lines.append()
+            new_pick = pick.create(vals)
+        return True
+
     @api.multi
     def open_pickings(self):
         self.ensure_one()
@@ -109,10 +129,10 @@ class FleetVehicleParts(models.Model):
         return res
 
     def _compute_all(self):
-        Cost = self.env['
-']
         for record in self:
-            record.picks_count = Odometer.search_count([('vehicle_id', '=', record.id)])
+            record.all_debited = False
+            record.picks_count = self.env['stock.picking'].search_count([('vehicle_id', '=', record.id)])
+            record.all_debited = self.env['fleet.part.line'].search_count([('vehicle_id', '=', record.id), ('accrued', '=', False)]) == 0
 
 
 class ProductVehicle(models.Model):

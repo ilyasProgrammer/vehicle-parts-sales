@@ -24,3 +24,4 @@ class PartLine(models.Model):
     sellingRate = fields.Integer(u'Продаваемость')
     weight = fields.Float(u'Вес')
     volume = fields.Float(u'Объем')
+    accrued = fields.Boolean(u'Оприходовано', default=False)

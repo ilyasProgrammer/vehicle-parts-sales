@@ -70,7 +70,7 @@
         <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
         <field name="arch" type="xml">
             <header position="inside">
-                <button string="Проверить VIN" name="check_vin" type="object" attrs="{'invisible': [('vin_checked', '=', True)]}" class="btn btn-primary o_red"/>
+                <button string="Проверить VIN" name="check_vin" type="object" attrs="{'invisible': [('vin_checked', '=', True)]}" class="btn btn-primary"/>
             </header>
                 <div name="button_box" position="replace">
                     <div class="oe_button_box" name="button_box">
@@ -93,6 +93,13 @@
                                 groups="fleet.fleet_group_manager">
                                 <field name="cost_count" widget="statinfo" string="Costs"/>
                             </button>
+                            <button name="open_pickings"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-th"
+                                help="Документы оприходования" >
+                                <field name="picks_count" widget="statinfo" string="Поступления"/>
+                            </button>
                             <button name="return_action_to_open"
                                 type="object"
                                 class="oe_stat_button"
@@ -100,13 +107,6 @@
                                 context="{'xml_id':'fleet_vehicle_log_services_action'}"
                                 help="show the services logs for this vehicle" >
                                 <field name="service_count" widget="statinfo" string="Services"/>
-                            </button>
-                            <button name="open_pickings"
-                                type="object"
-                                class="oe_stat_button"
-                                icon="fa-th"
-                                help="Документы оприходования" >
-                                <!--<field name="fuel_logs_count" widget="statinfo" string="Fuel"/>-->
                             </button>
                             <button name="return_action_to_open"
                                 type="object"
@@ -118,17 +118,23 @@
                             </button>
                         </div>
             </div>
-            <field name="odometer" position="before">
+            <label for="odometer" position="before">
+                <field name="all_debited" invisible="1"/>
+                <field name="picking_type"/>
                 <field name="license_plate"/>
-            </field>
+            </label>
             <field name="driver_id" position="before">
                 <field name="prod_date"/>
                 <field name="engine"/>
                 <field name="gear"/>
             </field>
             <div class="oe_title" position="after">
+
+                <span col="2" class="pull-left">
+                    <button style="float:left" string="Добавить из каталога" type="object" name="add_part" class="oe_highlight "/>
+                    <button style="float:left" string="Оприходовать" name="debit" type="object" attrs="{'invisible': [('all_debited', '=', True)]}" class="btn-primary"/>
+                </span>
                 <group col="1">
-                    <button string="Добавить из каталога" type="object" name="add_part" class="oe_highlight"/>
                     <field name="part_line_ids" nolabel="1"/>
                 </group>
             </div>
