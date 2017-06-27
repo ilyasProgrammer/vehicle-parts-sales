@@ -52,23 +52,6 @@ class FleetVehicleParts(models.Model):
             'target': 'self',
         }
 
-    @api.one
-    def get_price(self):
-        data = {
-            'uid': self._context['uid'],  # int
-            'db': self.env.cr.dbname,  # string
-            'fleet_id': self.id  # int
-        }
-        data = {"id":123,"method":"parts.prices","params": {"ident":"8e0201803l"},"jsonrpc":"2.0"}
-        req = urllib2.Request('http://172.16.4.202')
-        req.add_header('Content-Type', 'application/json')
-
-        try:
-            response = urllib2.urlopen(req, json.dumps(data), timeout=20)
-        except urllib2.URLError, e:
-            raise TimeOut("There was an error: %r" % e)
-        return True
-
     @api.multi
     def check_vin(self):
         # form button
@@ -155,13 +138,14 @@ class FleetVehicleParts(models.Model):
 
 
 class ProductVehicle(models.Model):
-    _inherit = "product.product"
+    _inherit = "product.template"
 
     c_id = fields.Integer('АйДи каталога')
     brandId = fields.Integer('brandId')
     note = fields.Char(u'Примечание')
     oem = fields.Char(u'Артикул')
     secondOem = fields.Char(u'GMNUM артикул')
+    price_ids = fields.One2many('fleet.part.price', 'product_id')
 
 
 class VehicleBrand(models.Model):

@@ -3,6 +3,7 @@
 from odoo import http, api, registry
 from odoo.http import request
 import json
+import urllib2
 import logging
 
 _logger = logging.getLogger("# " + __name__)
@@ -15,7 +16,7 @@ class FleetPartsAPI(http.Controller):
     def load_part(self, uid, db, vin, hash, data):
         # Add product.product
         # TODO создавать от имени юзера а не судо
-        product = request.env['product.product']
+        product = request.env['product.template']
         line = request.env['fleet.part.line']
         car = request.env['fleet.vehicle']
         if not data:
@@ -56,6 +57,10 @@ class FleetPartsAPI(http.Controller):
                 vals['volume'] = data['volume']
             if car_to_add_line:
                 vals['vehicle_id'] = car_to_add_line.id
+            prices = self.get_price(new_product.oem)
+            if prices:
+                for r in prices:
+                    new_price = self.env['fleet.part.price'].create({'product_id': new_product.id, 'price': prices.lol})
             line.sudo().create(vals)
             _logger.info("New sale item created: %s", data['guid'])
         else:
@@ -67,7 +72,7 @@ class FleetPartsAPI(http.Controller):
     @http.route('/web/load_part_image', type='http',  auth="public", csrf=False, website=True)
     def load_part_image(self, uid, db, vin, hash, data):
         # Add product.product
-        product = self.env['product.product']
+        product = self.env['product.template']
         if not data:
             return
         for r in data['result']:
@@ -92,7 +97,7 @@ class FleetPartsAPI(http.Controller):
     @http.route('/web/delete_part', type='http',  auth="public", csrf=False, website=True)
     def delete_part(self, uid, db, vin, hash, data):
         # Add product.product
-        product = self.env['product.product']
+        product = self.env['product.template']
         if not data:
             return
         for r in data['result']:
@@ -113,3 +118,16 @@ class FleetPartsAPI(http.Controller):
                 _logger.info("Old product found and updated: %s", r['name'])
 
         return '{"response": "OK"}'
+
+    @api.model
+    def get_price(self, article):
+        data = {"id": 1, "method": "parts.prices", "params": {"ident": article}, "jsonrpc": "2.0"}
+        req = urllib2.Request('http://172.16.5.5')
+        req.add_header('Content-Type', 'application/json')
+
+        try:
+            response = urllib2.urlopen(req, json.dumps(data), timeout=20)
+            result = json.load(response)
+            return result
+        except urllib2.URLError, e:
+            raise TimeOut("There was an error: %r" % e)

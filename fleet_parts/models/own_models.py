@@ -12,7 +12,7 @@ class PartLine(models.Model):
     _description = u'Строка таблицы товаров разборщика'
 
     vehicle_id = fields.Many2one('fleet.vehicle', string=u'Авто')
-    product_id = fields.Many2one('product.product', string=u'Деталь')
+    product_id = fields.Many2one('product.template', string=u'Деталь')
     guid = fields.Char(u'ID')
     c_id = fields.Integer('ID каталога')
     partId = fields.Integer('ID детали')
@@ -25,3 +25,11 @@ class PartLine(models.Model):
     weight = fields.Float(u'Вес')
     volume = fields.Float(u'Объем')
     accrued = fields.Boolean(u'Оприходовано', default=False)
+
+
+class PartPices(models.Model):
+    _name = "fleet.part.price"
+    _description = u'Цены на детали'
+
+    product_id = fields.Many2one('product.template', string=u'Деталь')
+    price = fields.Float(string=u'Цена')
