@@ -33,3 +33,4 @@ class PartPices(models.Model):
 
     product_id = fields.Many2one('product.template', string=u'Деталь')
     price = fields.Float(string=u'Цена')
+    state = fields.Char(u'Состояние')

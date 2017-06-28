@@ -16,6 +16,7 @@
         'views/fleet_vehicle.xml',
         'views/parts.xml',
         'views/stock.xml',
+        'views/product.xml',
         'cron_jobs.xml',
     ],
     'demo': [

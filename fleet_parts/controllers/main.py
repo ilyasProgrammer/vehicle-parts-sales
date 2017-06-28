@@ -58,9 +58,10 @@ class FleetPartsAPI(http.Controller):
             if car_to_add_line:
                 vals['vehicle_id'] = car_to_add_line.id
             prices = self.get_price(new_product.oem)
-            if prices:
-                for r in prices:
-                    new_price = self.env['fleet.part.price'].create({'product_id': new_product.id, 'price': prices.lol})
+            if not prices.get('error', False):
+                for k, v in prices['result'].iteritems():
+                    new_price = request.env['fleet.part.price'].sudo().create({'product_id': new_product.id, 'price':v , 'state':k})
+                    _logger.info("New price for item %s created: %s", (new_product.name, data['name']))
             line.sudo().create(vals)
             _logger.info("New sale item created: %s", data['guid'])
         else:
@@ -121,13 +122,13 @@ class FleetPartsAPI(http.Controller):
 
     @api.model
     def get_price(self, article):
-        data = {"id": 1, "method": "parts.prices", "params": {"ident": article}, "jsonrpc": "2.0"}
-        req = urllib2.Request('http://172.16.5.5')
-        req.add_header('Content-Type', 'application/json')
-
+        larticle = article.lower().replace(' ', '')
+        url = 'http://services.krafto.local/json-rpc/'
+        data = {"id": 1, "method": "parts.prices", "params": {"ident": 'n90740801'}, "jsonrpc": "2.0"}
+        req = urllib2.Request(url=url, data=json.dumps(data), headers={'Content-Type': 'application/json'})
         try:
-            response = urllib2.urlopen(req, json.dumps(data), timeout=20)
+            response = urllib2.urlopen(req)
             result = json.load(response)
             return result
         except urllib2.URLError, e:
-            raise TimeOut("There was an error: %r" % e)
+            return {'error': e}

@@ -45,5 +45,17 @@
             </form>
         </field>
     </record>
+
+    <record id="parts_pirces_tree" model="ir.ui.view">
+        <field name="name">fleet.part.price.tree</field>
+        <field name="model">fleet.part.price</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="price"/>
+                <field name="state"/>
+                <field name="create_date" sting="Получено"/>
+            </tree>
+        </field>
+    </record>
 </data>
 </odoo>
