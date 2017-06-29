@@ -17,7 +17,7 @@ class TimeOut(Exception):
 
 class FleetVehicleParts(models.Model):
     _inherit = "fleet.vehicle"
-
+    # TODO предупреждение о пикинг тайпе если его нет
     note = fields.Char(string=u'Название')
     name = fields.Char(compute="_compute_vehicle_name", store=True)
     vin_checked = fields.Boolean('VIN проверен', default=False, help=u'VIN проверен', copy=False)
@@ -29,9 +29,10 @@ class FleetVehicleParts(models.Model):
     model_id = fields.Many2one('fleet.vehicle.model', u'Модель', required=False, help='Model of the vehicle')
     vin_sn = fields.Char(u'VIN (номер шасси)', copy=False)
     pick_ids = fields.One2many('stock.picking', 'vehicle_id', string=u'Поступления')
-    picking_type = fields.Many2one('stock.picking.type', string=u'Вид поступления', required=True)
+    picking_type = fields.Many2one('stock.picking.type', string=u'Вид поступления')
     picks_count = fields.Integer(compute="_compute_all", string=u'Поступления')
     all_debited = fields.Boolean(string=u'Все оприходовано', default=False)
+    partner_id = fields.Many2one('res.partner', string=u'Контрагент', help=u'Покупатель или разборщик')
 
     @api.depends('model_id', 'license_plate')
     def _compute_vehicle_name(self):
