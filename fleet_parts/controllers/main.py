@@ -6,12 +6,13 @@ import json
 import urllib2
 import logging
 import collections
+from odoo.addons.web.controllers.main import ensure_db, Home
 
 _logger = logging.getLogger("# " + __name__)
 _logger.setLevel(logging.DEBUG)
 
 
-class FleetPartsAPI(http.Controller):
+class FleetPartsAPI(Home):
     # TODO Проверка хеша
     # TODO привязать партнера
     @http.route('/web/load_part', type='http',  auth="public", csrf=False, website=True)
@@ -140,17 +141,21 @@ class FleetPartsAPI(http.Controller):
 
         return '{"response": "OK"}'
 
-    @http.route('/web/add_vin', type='http',  auth="public", csrf=False, website=True)
-    def add_vin(self):
+    @http.route('/web/add_vin', type='json', auth="public", methods=['POST'], website=True)
+    def add_vin(self, *args, **kw):
         product = request.env['product.template']
         line = request.env['fleet.part.line']
         car = request.env['fleet.vehicle']
-        vin = 1
+        cr, uid, context, registry = request.cr, request.uid, request.context, request.registry
+        res = {'ingredients': ''}
+        if kw.get('car_vin', False):
+            vin = kw['car_vin']
+        if kw.get('car_name', False):
+            vin = kw['car_name']
         old_car = car.sudo().search([('vin_sn', '=', vin)])
         if not old_car:
             vals = {'name': 1, 'partner_id': request.website.partner_id.id, 'vin_sn': 1}
             new_car = car.sudo().create(vals)
-        return '{"response": "OK"}'
 
     @http.route('/web/load_part_image', type='http',  auth="public", csrf=False, website=True)
     def load_part_image(self, uid, db, vin, hash, data):

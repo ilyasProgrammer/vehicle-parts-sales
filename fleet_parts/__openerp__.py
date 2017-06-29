@@ -11,6 +11,8 @@
         'sale',
         'fleet',
         'stock',
+        'website',
+        'website_sale',
                 ],
     'data': [
         'views/fleet_vehicle.xml',
@@ -18,6 +20,7 @@
         'views/stock.xml',
         'views/product.xml',
         'cron_jobs.xml',
+        'views/templates.xml',
     ],
     'demo': [
     ],
