@@ -2,6 +2,7 @@
 
 from odoo import http, api, registry
 from odoo.http import request
+import werkzeug
 import json
 import urllib2
 import logging
@@ -15,6 +16,24 @@ _logger.setLevel(logging.DEBUG)
 class FleetPartsAPI(Home):
     # TODO Проверка хеша
     # TODO привязать партнера
+    @http.route('/web/catalog_to_cart', type='http', auth="public", csrf=False, website=True)
+    def catalog_to_cart(self, uid, db, vin, hash):
+        car = request.env['fleet.vehicle']
+        cr, uid, context, registry = request.cr, request.uid, request.context, request.registry
+        car_to_open = car.sudo().search([('vin_sn', '=', vin)])
+        return werkzeug.utils.redirect("/web#id=%s&view_type=form&model=fleet.vehicle&menu_id=214&action=290" % car_to_open.id)
+
+        # return {
+        #     'type': 'ir.actions.act_window',
+        #     'view_type': 'form',
+        #     'view_mode': 'form,tree',
+        #     'res_model': 'fleet.vehicle',
+        #     'target': 'current',
+        #     'context': context,
+        #     'res_id': car_to_open.id,
+        #     'domain': [('id', '=', car_to_open.id)],
+        # }
+
     @http.route('/web/load_part', type='http',  auth="public", csrf=False, website=True)
     def load_part(self, uid, db, vin, hash, data):
         # TODO создавать от имени юзера а не судо
