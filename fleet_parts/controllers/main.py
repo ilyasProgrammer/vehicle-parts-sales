@@ -147,15 +147,15 @@ class FleetPartsAPI(Home):
         line = request.env['fleet.part.line']
         car = request.env['fleet.vehicle']
         cr, uid, context, registry = request.cr, request.uid, request.context, request.registry
-        res = {'ingredients': ''}
         if kw.get('car_vin', False):
-            vin = kw['car_vin']
-        if kw.get('car_name', False):
-            vin = kw['car_name']
-        old_car = car.sudo().search([('vin_sn', '=', vin)])
-        if not old_car:
-            vals = {'name': 1, 'partner_id': request.website.partner_id.id, 'vin_sn': 1}
-            new_car = car.sudo().create(vals)
+            old_car = car.sudo().search([('vin_sn', '=', kw['car_vin'])])
+            if not old_car:
+                vals = {'note': kw.get('car_name', False),
+                        'partner_id': request.website.partner_id.id,
+                        'vin_sn': kw['car_vin']}
+                new_car = car.sudo().create(vals)
+                _logger.info("New car created. VIN: %s" % kw['car_vin'])
+                new_car.check_vin()
 
     @http.route('/web/load_part_image', type='http',  auth="public", csrf=False, website=True)
     def load_part_image(self, uid, db, vin, hash, data):

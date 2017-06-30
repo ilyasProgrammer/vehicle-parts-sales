@@ -19,7 +19,7 @@ class FleetVehicleParts(models.Model):
     _inherit = "fleet.vehicle"
     # TODO предупреждение о пикинг тайпе если его нет
     note = fields.Char(string=u'Название')
-    name = fields.Char(compute="_compute_vehicle_name", store=True)
+    # name = fields.Char(compute="_compute_vehicle_name", store=True)
     vin_checked = fields.Boolean('VIN проверен', default=False, help=u'VIN проверен', copy=False)
     part_line_ids = fields.One2many('fleet.part.line', 'vehicle_id', string=u'Детали')
     prod_date = fields.Integer(u'Дата производства')
