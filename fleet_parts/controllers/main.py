@@ -19,20 +19,8 @@ class FleetPartsAPI(Home):
     @http.route('/web/catalog_to_cart', type='http', auth="public", csrf=False, website=True)
     def catalog_to_cart(self, uid, db, vin, hash):
         car = request.env['fleet.vehicle']
-        cr, uid, context, registry = request.cr, request.uid, request.context, request.registry
         car_to_open = car.sudo().search([('vin_sn', '=', vin)])
         return werkzeug.utils.redirect("/web#id=%s&view_type=form&model=fleet.vehicle&menu_id=214&action=290" % car_to_open.id)
-
-        # return {
-        #     'type': 'ir.actions.act_window',
-        #     'view_type': 'form',
-        #     'view_mode': 'form,tree',
-        #     'res_model': 'fleet.vehicle',
-        #     'target': 'current',
-        #     'context': context,
-        #     'res_id': car_to_open.id,
-        #     'domain': [('id', '=', car_to_open.id)],
-        # }
 
     @http.route('/web/load_part', type='http',  auth="public", csrf=False, website=True)
     def load_part(self, uid, db, vin, hash, data):
@@ -162,10 +150,10 @@ class FleetPartsAPI(Home):
 
     @http.route('/web/add_vin', type='json', auth="public", methods=['POST'], website=True)
     def add_vin(self, *args, **kw):
+        cr, uid, context, registry = request.cr, request.uid, request.context, request.registry
         product = request.env['product.template']
         line = request.env['fleet.part.line']
         car = request.env['fleet.vehicle']
-        cr, uid, context, registry = request.cr, request.uid, request.context, request.registry
         if kw.get('car_vin', False):
             old_car = car.sudo().search([('vin_sn', '=', kw['car_vin'])])
             if not old_car:
@@ -178,26 +166,14 @@ class FleetPartsAPI(Home):
 
     @http.route('/web/load_part_image', type='http',  auth="public", csrf=False, website=True)
     def load_part_image(self, uid, db, vin, hash, data):
-        # Add product.product
-        product = self.env['product.template']
+        cr, uid, context, registry = request.cr, request.uid, request.context, request.registry
+        product = request.env['product.template']
+        line = request.env['fleet.part.line']
+        car = request.env['fleet.vehicle']
         if not data:
             return
-        for r in data['result']:
-            found = product.search([('c_id', '=', r['id'])])
-            if not found:
-                product.create(r)
-                _logger.info("New product created: %s", r['name'])
-            else:
-                found[0].write(r)
-                _logger.info("Old product found and updated: %s", r['name'])
-        for r in data['result']['part']:
-            found = product.search([('c_id', '=', r['id'])])
-            if not found:
-                product.create(r)
-                _logger.info("New product created: %s", r['name'])
-            else:
-                found[0].write(r)
-                _logger.info("Old product found and updated: %s", r['name'])
+        res = json.loads(data)
+        found = line.sudo().search([('c_id', '=', res['productId'])])
 
         return '{"response": "OK"}'
 
