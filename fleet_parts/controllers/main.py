@@ -6,6 +6,7 @@ import werkzeug
 import json
 import urllib2
 import logging
+import base64
 import collections
 from odoo.addons.web.controllers.main import ensure_db, Home
 
@@ -170,10 +171,17 @@ class FleetPartsAPI(Home):
         product = request.env['product.template']
         line = request.env['fleet.part.line']
         car = request.env['fleet.vehicle']
+        image = request.env['fleet.part.image']
         if not data:
             return
         res = json.loads(data)
         found = line.sudo().search([('c_id', '=', res['productId'])])
+        if found:
+            vals = {'name': res['name'],
+                    'image': base64.b64encode(res['bytes']),
+                    'part_line_id': found.id}
+            new_image = image.sudo().create(vals)
+
 
         return '{"response": "OK"}'
 

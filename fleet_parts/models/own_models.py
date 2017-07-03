@@ -25,7 +25,7 @@ class PartLine(models.Model):
     weight = fields.Float(u'Вес')
     volume = fields.Float(u'Объем')
     accrued = fields.Boolean(u'Оприходовано', default=False)
-    part_image_ids = fields.One2many('fleet.part.image', 'part_id', string=u'Фото')
+    part_image_ids = fields.One2many('fleet.part.image', 'part_line_id', string=u'Фото')
 
 
 class PartPices(models.Model):
@@ -43,4 +43,4 @@ class PartImage(models.Model):
 
     name = fields.Char(u'Название')
     image = fields.Binary(u'Фото', attachment=True)
-    part_id = fields.Many2one('fleet.part.line', u'Деталь', copy=True)
+    part_line_id = fields.Many2one('fleet.part.line', u'Деталь', copy=True)
