@@ -138,17 +138,6 @@ class FleetVehicleParts(models.Model):
         # self.all_debited = self.env['fleet.part.line'].search_count([('vehicle_id', '=', self.id), ('accrued', '=', False)]) == 0
 
 
-class ProductVehicle(models.Model):
-    _inherit = "product.template"
-
-    c_id = fields.Integer('АйДи каталога')
-    brandId = fields.Integer('brandId')
-    note = fields.Char(u'Примечание')
-    oem = fields.Char(u'Артикул')
-    secondOem = fields.Char(u'GMNUM артикул')
-    price_ids = fields.One2many('fleet.part.price', 'product_id')
-
-
 class VehicleBrand(models.Model):
     _inherit = "fleet.vehicle.model.brand"
 
