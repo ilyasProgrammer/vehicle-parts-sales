@@ -181,34 +181,12 @@ class FleetPartsAPI(Home):
                     'image': base64.b64encode(res['bytes']),
                     'part_line_id': found.id}
             new_image = image.sudo().create(vals)
-
-
         return '{"response": "OK"}'
 
     @http.route('/web/delete_part', type='http',  auth="public", csrf=False, website=True)
     def delete_part(self, uid, db, vin, hash, data):
-        # Add product.product
-        product = self.env['product.template']
-        if not data:
-            return
-        for r in data['result']:
-            found = product.search([('c_id', '=', r['id'])])
-            if not found:
-                product.create(r)
-                _logger.info("New product created: %s", r['name'])
-            else:
-                found[0].write(r)
-                _logger.info("Old product found and updated: %s", r['name'])
-        for r in data['result']['part']:
-            found = product.search([('c_id', '=', r['id'])])
-            if not found:
-                product.create(r)
-                _logger.info("New product created: %s", r['name'])
-            else:
-                found[0].write(r)
-                _logger.info("Old product found and updated: %s", r['name'])
-
-        return '{"response": "OK"}'
+        # TODO
+        pass
 
     @api.model
     def get_price(self, article):
